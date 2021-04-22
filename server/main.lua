@@ -51,12 +51,13 @@ ESX.RegisterCommand('armsfix', 'admin', function(xPlayer, args, showError)
 		if user.skin then
 			skin = json.decode(user.skin)
 			skin.arms_2 = 0
+			MySQL.Async.execute('UPDATE users SET skin = @skin WHERE identifier = @identifier', {
+				['@skin'] = json.encode(skin),
+				['@identifier'] = xPlayer.identifier
+			})
+		end)
+	else
+		print("[ESX:SKIN] ERROR: NO SKIN")
 		end
-
-		MySQL.Async.execute('UPDATE users SET skin = @skin WHERE identifier = @identifier', {
-			['@skin'] = json.encode(skin),
-			['@identifier'] = xPlayer.identifier
-		})
-	end)
 end, false, {help = _U('armsfix')})
 
