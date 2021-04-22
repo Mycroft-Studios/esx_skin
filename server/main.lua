@@ -55,9 +55,9 @@ ESX.RegisterCommand('armsfix', 'admin', function(xPlayer, args, showError)
 				['@skin'] = json.encode(skin),
 				['@identifier'] = xPlayer.identifier
 			})
-		end)
 	else
 		print("[ESX:SKIN] ERROR: NO SKIN")
 		end
+	end)
 end, false, {help = _U('armsfix')})
 
