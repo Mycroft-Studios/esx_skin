@@ -20,21 +20,6 @@ AddEventHandler('esx_skin:save', function(skin)
 	})
 end)
 
-RegisterServerEvent('esx_skin:responseSaveSkin')
-AddEventHandler('esx_skin:responseSaveSkin', function(skin)
-	local xPlayer = ESX.GetPlayerFromId(source)
-
-	if xPlayer.getGroup() == 'admin' then
-		local file = io.open('resources/[esx]/esx_skin/skins.txt', "a")
-
-		file:write(json.encode(skin) .. "\n\n")
-		file:flush()
-		file:close()
-	else
-		print(('esx_skin: %s attempted saving skin to file'):format(xPlayer.getIdentifier()))
-	end
-end)
-
 ESX.RegisterServerCallback('esx_skin:getPlayerSkin', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
@@ -56,10 +41,22 @@ ESX.RegisterServerCallback('esx_skin:getPlayerSkin', function(source, cb)
 	end)
 end)
 
-ESX.RegisterCommand('skin', 'admin', function(xPlayer, args, showError)
-	xPlayer.triggerEvent('esx_skin:openSaveableMenu')
-end, false, {help = _U('skin')})
+ESX.RegisterCommand('armsfix', 'admin', function(xPlayer, args, showError)
+	MySQL.Async.fetchAll('SELECT skin FROM users WHERE identifier = @identifier', {
+		['@identifier'] = xPlayer.identifier
+	}, function(users)
+		local user, skin = users[1]
 
-ESX.RegisterCommand('skinsave', 'admin', function(xPlayer, args, showError)
-	xPlayer.triggerEvent('esx_skin:requestSaveSkin')
-end, false, {help = _U('saveskin')})
+
+		if user.skin then
+			skin = json.decode(user.skin)
+			skin.arms_2 = 0
+		end
+
+		MySQL.Async.execute('UPDATE users SET skin = @skin WHERE identifier = @identifier', {
+			['@skin'] = json.encode(skin),
+			['@identifier'] = xPlayer.identifier
+		})
+	end)
+end, false, {help = _U('armsfix')})
+

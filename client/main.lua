@@ -5,7 +5,7 @@ local firstSpawn, zoomOffset, camOffset, heading, skinLoaded = true, 0.0, 0.0, 9
 Citizen.CreateThread(function()
     while ESX == nil do
         TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-        Citizen.Wait(0)
+        Citizen.Wait(10)
     end
 end)
 
@@ -150,7 +150,7 @@ end
 
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(0)
+        Citizen.Wait(5)
 
         if not skinLoaded and isCameraActive then
             DisableControlAction(2, 30, true)
@@ -208,7 +208,7 @@ Citizen.CreateThread(function()
     local angle = 90
 
     while true do
-        Citizen.Wait(0)
+        Citizen.Wait(4)
 
         if isCameraActive then
             if IsControlPressed(0, 108) then
@@ -325,9 +325,3 @@ AddEventHandler('esx_skin:openSaveableRestrictedMenu', function(submitCb, cancel
     OpenSaveableMenu(submitCb, cancelCb, restrict)
 end)
 
-RegisterNetEvent('esx_skin:requestSaveSkin')
-AddEventHandler('esx_skin:requestSaveSkin', function()
-    TriggerEvent('skinchanger:getSkin', function(skin)
-        TriggerServerEvent('esx_skin:responseSaveSkin', skin)
-    end)
-end)
